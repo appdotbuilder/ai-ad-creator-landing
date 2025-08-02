@@ -1,13 +1,13 @@
 
+import { db } from '../db';
+import { leadsTable } from '../db/schema';
 import { type CreateLeadInput, type Lead } from '../schema';
 
 export const createLead = async (input: CreateLeadInput): Promise<Lead> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is creating a new lead from landing page form submissions,
-    // capturing potential customers interested in the AI ad creation platform.
-    // Should handle duplicate email validation and UTM parameter tracking.
-    return Promise.resolve({
-        id: 0, // Placeholder ID
+  try {
+    // Insert lead record
+    const result = await db.insert(leadsTable)
+      .values({
         email: input.email,
         first_name: input.first_name,
         last_name: input.last_name,
@@ -19,8 +19,15 @@ export const createLead = async (input: CreateLeadInput): Promise<Lead> => {
         utm_source: input.utm_source,
         utm_medium: input.utm_medium,
         notes: input.notes,
-        status: 'new' as const,
-        created_at: new Date(),
-        updated_at: new Date()
-    } as Lead);
+        status: 'new'
+      })
+      .returning()
+      .execute();
+
+    const lead = result[0];
+    return lead;
+  } catch (error) {
+    console.error('Lead creation failed:', error);
+    throw error;
+  }
 };

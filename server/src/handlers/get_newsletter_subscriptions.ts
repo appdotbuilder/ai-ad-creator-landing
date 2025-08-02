@@ -1,10 +1,17 @@
 
+import { db } from '../db';
+import { newsletterSubscriptionsTable } from '../db/schema';
 import { type NewsletterSubscription } from '../schema';
 
 export const getNewsletterSubscriptions = async (): Promise<NewsletterSubscription[]> => {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all newsletter subscriptions,
-    // used for email marketing campaigns and subscriber management.
-    // Should support filtering by status and subscription date.
-    return [];
+  try {
+    const results = await db.select()
+      .from(newsletterSubscriptionsTable)
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Newsletter subscriptions fetch failed:', error);
+    throw error;
+  }
 };
